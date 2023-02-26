@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import static com.example.springsecurity.config.UserRole.ADMIN;
+import static com.example.springsecurity.config.UserRole.USER;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -32,8 +35,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET,"/")
                 .permitAll()
-                .antMatchers("/login")
-                .authenticated()
+                .antMatchers("/api/**")
+                .hasRole(ADMIN.name())
                 .and()
                 .httpBasic();
     }
@@ -44,12 +47,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails rufet = User.builder()
                 .username("rufet")
                 .password(passwordEncoder.encode("12345"))
-                .roles("ADMIN")
+                .roles(ADMIN.name())
                 .build();
         UserDetails ugur = User.builder()
                 .username("ugur")
                 .password(passwordEncoder.encode("12345"))
-                .roles("USER")
+                .roles(USER.name())
                 .build();
         return new InMemoryUserDetailsManager(rufet,ugur);
     }
